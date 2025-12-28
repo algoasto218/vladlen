@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Планета Мебели: Пробуждение</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #0a0a16;
+            color: #e0e0ff;
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+            transition: background-color 0.8s ease;
+        }
+
+        .planet-awake {
+            background-color: #2d0615; /* Красноватый оттенок при пробуждении */
+        }
+
+        /* Основной контейнер с прокруткой */
+        .scroll-container {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Секция героя с таймером */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            background: radial-gradient(circle at 20% 30%, rgba(26, 40, 120, 0.3) 0%, rgba(10, 10, 22, 0) 50%);
+        }
+
+        .title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            font-weight: 900;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #8a2be2, #00d4ff, #9d4edd);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: clamp(1.1rem, 3vw, 1.5rem);
+            max-width: 700px;
+            margin-bottom: 3rem;
+            color: #b0b0ff;
+        }
+
+        /* Стили для таймера */
+        .timer-container {
+            background: rgba(20, 20, 40, 0.7);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(138, 43, 226, 0.5);
+            border-radius: 20px;
+            padding: 2rem 3rem;
+            margin: 2rem 0;
+            box-shadow: 0 0 40px rgba(138, 43, 226, 0.4);
+            transition: all 0.5s ease;
+        }
+
+        .timer-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            color: #00d4ff;
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .timer {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-shadow: 0 0 15px #8a2be2;
+            transition: font-size 0.3s ease;
+        }
+
+        .timer-warning {
+            color: #ff4d6d;
+            text-shadow: 0 0 20px #ff1744;
+        }
+
+        .timer-critical {
+            color: #ff0000;
+            text-shadow: 0 0 25px #ff0000;
+            animation: pulse 0.5s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { opacity: 1; }
+            to { opacity: 0.7; }
+        }
+
+        /* Контентные секции */
+        .content-section {
+            max-width: 1000px;
+            margin: 6rem auto;
+            padding: 0 2rem;
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            color: #00d4ff;
+            margin-bottom: 2rem;
+            border-left: 5px solid #8a2be2;
+            padding-left: 1rem;
+        }
+
+        .game-description {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            background: rgba(30, 30, 60, 0.5);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid #9d4edd;
+        }
+
+        /* Галерея скриншотов */
+        .screenshot-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+
+        .screenshot {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            border: 2px solid transparent;
+            background: linear-gradient(45deg, #0a0a16, #1a1a2e) padding-box,
+                        linear-gradient(45deg, #8a2be2, #00d4ff) border-box;
+        }
+
+        .screenshot:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 15px 30px rgba(138, 43, 226, 0.6);
+        }
+
+        .screenshot img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .screenshot-caption {
+            padding: 1rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: #b0b0ff;
+            text-align: center;
+        }
+
+        /* Кнопка призыва к действию */
+        .cta-container {
+            text-align: center;
+            margin: 5rem 0;
+            padding: 3rem;
+            background: linear-gradient(135deg, rgba(138, 43, 226, 0.1), rgba(0, 212, 255, 0.1));
+            border-radius: 20px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .cta-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            color: #ffffff;
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(45deg, #8a2be2, #4a00e0);
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            padding: 1.2rem 3rem;
+            border: none;
+            border-radius: 50px;
+            text-decoration: none;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(138, 43, 226, 0.5);
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .cta-button:hover {
+            transform: scale(1.08);
+            box-shadow: 0 15px 35px rgba(138, 43, 226, 0.8);
+            background: linear-gradient(45deg, #9d4edd, #5a10f0);
+        }
+
+        .cta-button i {
+            margin-left: 10px;
+        }
+
+        /* Планета на заднем плане */
+        .planet-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            transition: filter 1.5s ease, opacity 1.5s ease;
+        }
+
+        .planet-image {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.4;
+        }
+
+        .pulse-layer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 50%, rgba(157, 78, 221, 0.15) 0%, transparent 50%);
+            animation: planetPulse 15s infinite alternate ease-in-out;
+            opacity: 0.5;
+        }
+
+        @keyframes planetPulse {
+            0% { transform: scale(1); opacity: 0.3; }
+            100% { transform: scale(1.05); opacity: 0.7; }
+        }
+
+        /* Футер */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #8888cc;
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(138, 43, 226, 0.2);
+            margin-top: 4rem;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .timer {
+                font-size: 3.5rem;
+            }
+            .timer-container {
+                padding: 1.5rem;
+            }
+            .title {
+                font-size: 2.8rem;
+            }
+            .screenshot-gallery {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Фон с "планетой" -->
+    <div class="planet-bg" id="planetBackground">
+        <img src="https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?ixlib=rb-4.0.3&auto=format&fit=crop&w=1471&q=80" alt="Фон планеты" class="planet-image" id="bgImage">
+        <div class="pulse-layer"></div>
+    </div>
+
+    <!-- Основной контент с прокруткой -->
+    <div class="scroll-container">
+        <!-- Герой-секция с таймером -->
+        <section class="hero">
+            <h1 class="title">ПЛАНЕТА МЕБЕЛИ</h1>
+            <p class="subtitle">Космонавт Гоша совершил аварийную посадку на загадочном мире, где всё — от лесов до рек — создано из мебели. Сначала планета казалась спящей... но что-то меняется.</p>
+
+            <div class="timer-container">
+                <div class="timer-label">ДО ПРОБУЖДЕНИЯ ПЛАНЕТЫ ОСТАЛОСЬ</div>
+                <div class="timer" id="countdownTimer">05:00:00</div>
+            </div>
+
+            <p id="dynamicText">Прокручивай вниз, чтобы узнать историю Гоши. Но помни — с каждым пикселем планета просыпается, а время ускоряется.</p>
+        </section>
+
+        <!-- Секция с описанием игры -->
+        <section class="content-section">
+            <h2 class="section-title"><i class="fas fa-user-astronaut"></i> ТВОЯ МИССИЯ</h2>
+            <div class="game-description">
+                <p>Ты — <strong>космонавт Гоша</strong>. После крушения корабля ты оказываешься на невероятной <strong>«Планете Мебели»</strong>.</p>
+                <p>Твоя цель — выжить, починить корабль и найти путь домой. Исследуй <strong>лес из стульев</strong>, пересеки <strong>реку из кроватей</strong>, веди переговоры с охранниками <strong>крепости из диванов</strong>. Каждый твой выбор ведёт к разным последствиям — от дружеского пира до фатальной ошибки.</p>
+                <p>Будь осторожен: планета не так безжизненна, как кажется. Она наблюдает. Она реагирует. И она начинает <strong>просыпаться</strong>.</p>
+            </div>
+
+            <h2 class="section-title"><i class="fas fa-images"></i> МИР ПЛАНЕТЫ МЕБЕЛИ</h2>
+            <!-- Вставьте ваши скриншоты сюда, заменив src -->
+            <div class="screenshot-gallery">
+                <!-- Скриншот 1 -->
+                <div class="screenshot">
+                    <img src="1.png" alt="Гоша приземляется на планете">
+                    <div class="screenshot-caption">Аварийная посадка. Первый взгляд на мир мебели.</div>
+                </div>
+                <!-- Скриншот 2 -->
+                <div class="screenshot">
+                    <img src="5.png" alt="Лес из стульев">
+                    <div class="screenshot-caption">Таинственный лабиринт Леса Стульев.</div>
+                </div>
+                <!-- Скриншот 3 -->
+                <div class="screenshot">
+                    <img src="8.png" alt="Крепость из диванов">
+                    <div class="screenshot-caption">Встреча с охранниками Крепости Диванов.</div>
+                </div>
+                <!-- Скриншот 4 -->
+                <div class="screenshot">
+                    <img src="4.png" alt="Река из кроватей">
+                    <div class="screenshot-caption">Исследование текущей Реки Кроватей.</div>
+                </div>
+                <!-- Скриншот 5 -->
+                <div class="screenshot">
+                    <img src="14.png" alt="Местный праздник">
+                    <div class="screenshot-caption">Участие в местном празднике жителей.</div>
+                </div>
+                <!-- Скриншот 6 -->
+                <div class="screenshot">
+                    <img src="17.png" alt="Карта планеты">
+                    <div class="screenshot-caption">Изучение найденной карты загадочного мира.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Секция с призывом к действию -->
+        <section class="content-section">
+            <div class="cta-container" id="ctaBlock">
+                <h2 class="cta-title" id="finalMessage">ОНА ПРОСНУЛАСЬ. ТВОЁ ПУТЕШЕСТВИЕ НАЧИНАЕТСЯ СЕЙЧАС</h2>
+                <p style="font-size: 1.3rem; margin-bottom: 2rem;">Помоги Гоше сделать правильный выбор и найти путь домой с этой странной, живой планеты.</p>
+                <!-- ССЫЛКА НА ИГРУ -->
+                <a href="https://algoasto218.github.io/mebel/" class="cta-button" target="_blank" id="playButton">
+                    НАЧАТЬ КВЕСТ <i class="fas fa-rocket"></i>
+                </a>
+                <p style="margin-top: 1.5rem; color: #b0b0ff;"><i class="fas fa-exclamation-triangle"></i> Кнопка станет активной, когда таймер достигнет нуля и планета полностью пробудится.</p>
+            </div>
+        </section>
+
+        <!-- Футер -->
+        <footer>
+            <p>Квест «Планета Мебели» • История космонавта Гоши • Сделай свой выбор</p>
+            <p>Все решения имеют последствия. Выбери с умом.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Основные элементы
+        const countdownTimer = document.getElementById('countdownTimer');
+        const planetBackground = document.getElementById('planetBackground');
+        const bgImage = document.getElementById('bgImage');
+        const ctaBlock = document.getElementById('ctaBlock');
+        const finalMessage = document.getElementById('finalMessage');
+        const playButton = document.getElementById('playButton');
+        const dynamicText = document.getElementById('dynamicText');
+        const body = document.body;
+
+        // Начальные значения таймера (5 минут в миллисекундах)
+        let totalTime = 5 * 60 * 1000; // 5 минут
+        let timeLeft = totalTime;
+        let timerActive = true;
+
+        // Фоновые изображения для смены (стоковые с Unsplash)
+        const backgroundStages = [
+            'https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?ixlib=rb-4.0.3&auto=format&fit=crop&w=1471&q=80', // Спокойный
+            'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?ixlib=rb-4.0.3&auto=format&fit=crop&w=1400&q=80', // Напряженный
+            'https://images.unsplash.com/photo-1502134249126-9f3755a50d78?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80', // Опасный
+            'https://images.unsplash.com/photo-1454789548928-9efd52dc4031?ixlib=rb-4.0.3&auto=format&fit=crop&w=1480&q=80'  // Пробуждение
+        ];
+
+        // Сообщения, меняющиеся при прокрутке
+        const scrollMessages = [
+            "Планета спит. Но её сон неглубок...",
+            "Ты чувствуешь лёгкую вибрацию под ногами?",
+            "Звуки вокруг становятся громче. Это не ветер.",
+            "Растения-мебель начинают медленно двигаться.",
+            "Небо меняет цвет. Что-то идёт не так.",
+            "ПЛАНЕТА ПРОСЫПАЕТСЯ. БЕГИ!"
+        ];
+
+        // Форматирование времени в ЧЧ:ММ:СС
+        function formatTime(ms) {
+            let hours = Math.floor(ms / (1000 * 60 * 60));
+            let minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+            let seconds = Math.floor((ms % (1000 * 60)) / 1000);
+
+            // Добавляем ведущие нули
+            hours = hours.toString().padStart(2, '0');
+            minutes = minutes.toString().padStart(2, '0');
+            seconds = seconds.toString().padStart(2, '0');
+
+            return `${hours}:${minutes}:${seconds}`;
+        }
+
+        // Обновление таймера
+        function updateTimer() {
+            if (!timerActive) return;
+
+            timeLeft -= 100; // Уменьшаем на 100 мс (обновляется чаще)
+
+            // Если время вышло
+            if (timeLeft <= 0) {
+                timeLeft = 0;
+                timerActive = false;
+                countdownTimer.textContent = "00:00:00";
+                countdownTimer.className = "timer timer-critical";
+                planetAwakens();
+                return;
+            }
+
+            countdownTimer.textContent = formatTime(timeLeft);
+
+            // Меняем цвет и стиль в зависимости от оставшегося времени
+            if (timeLeft < 60000) { // Меньше 1 минуты
+                countdownTimer.className = "timer timer-critical";
+            } else if (timeLeft < 180000) { // Меньше 3 минут
+                countdownTimer.className = "timer timer-warning";
+            }
+
+            // Рекурсивно вызываем обновление
+            setTimeout(updateTimer, 100);
+        }
+
+        // Финальная стадия - пробуждение планеты
+        function planetAwakens() {
+            // Меняем фон body
+            body.classList.add('planet-awake');
+
+            // Меняем финальное сообщение и активируем кнопку
+            finalMessage.textContent = "ПЛАНЕТА ПРОСНУЛАСЬ! ВЫЖИВЕШЬ ЛИ ТЫ?";
+            playButton.style.opacity = "1";
+            playButton.style.pointerEvents = "auto";
+            playButton.style.background = "linear-gradient(45deg, #ff4d6d, #ff0000)";
+
+            // Добавляем тряску для драматизма
+            ctaBlock.style.animation = "shake 0.5s ease-in-out";
+            setTimeout(() => {
+                ctaBlock.style.animation = "";
+            }, 500);
+
+            // Финальная смена фона
+            bgImage.src = backgroundStages[3];
+            planetBackground.style.filter = "brightness(1.3) contrast(1.2)";
+        }
+
+        // Обработчик прокрутки для ускорения таймера и смены фона
+        let lastScrollTop = 0;
+        let scrollMessageIndex = 0;
+
+        window.addEventListener('scroll', function() {
+            if (!timerActive) return;
+
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = (scrollTop / scrollHeight) * 100;
+
+            // Ускорение таймера в зависимости от прокрутки
+            // Максимальное ускорение в 10 раз при 100% прокрутке
+            const speedMultiplier = 1 + (scrollPercent / 100) * 9;
+            timeLeft -= 100 * speedMultiplier;
+
+            // Смена фона в зависимости от процента прокрутки
+            if (scrollPercent < 25) {
+                bgImage.src = backgroundStages[0];
+                planetBackground.style.filter = "brightness(1) contrast(1)";
+            } else if (scrollPercent < 50) {
+                bgImage.src = backgroundStages[1];
+                planetBackground.style.filter = "brightness(1.1) contrast(1.1)";
+            } else if (scrollPercent < 75) {
+                bgImage.src = backgroundStages[2];
+                planetBackground.style.filter = "brightness(1.2) contrast(1.2)";
+            }
+
+            // Смена текстового сообщения
+            const messageIndex = Math.min(Math.floor(scrollPercent / 20), scrollMessages.length - 1);
+            if (messageIndex !== scrollMessageIndex) {
+                scrollMessageIndex = messageIndex;
+                dynamicText.textContent = scrollMessages[scrollMessageIndex];
+                dynamicText.style.color = scrollMessageIndex >= 4 ? "#ff4d6d" : "#b0b0ff";
+            }
+
+            lastScrollTop = scrollTop;
+        });
+
+        // Изначально кнопка неактивна
+        playButton.style.opacity = "0.7";
+        playButton.style.pointerEvents = "none";
+        playButton.style.cursor = "not-allowed";
+
+        // Добавляем CSS для анимации тряски
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                20%, 40%, 60%, 80% { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Запускаем таймер при загрузке страницы
+        window.onload = function() {
+            updateTimer();
+            // Плавное появление контента
+            document.body.style.opacity = 0;
+            document.body.style.transition = "opacity 1.5s ease";
+            setTimeout(() => {
+                document.body.style.opacity = 1;
+            }, 100);
+        };
+    </script>
+</body>
+</html>
